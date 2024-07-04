@@ -1,0 +1,43 @@
+{% extends "bases/base_fila.html" %}
+
+
+{% block 'conteudo' %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <br>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <br>
+                <h3>Cadastro da Criança</h3>
+                <form action="{% url 'cadastrar_crianca' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <label>Nome</label>
+                    <input type="text" name="nome" class="form-control" placeholder="Nome da criança...">
+                    <br>
+                    <label>Idade</label>
+                    <input type="number" name="idade" class="form-control">
+                    <br>
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Responsável</label>
+                            <input type="text" name="responsavel" class="form-control" placeholder="Nome do Responsável...">
+                        </div>
+                        <div class="col-md">
+                            <label>Telefone</label>
+                            <input type="text" name="telefone" class="form-control" placeholder="Telefone do Responsável...">
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <input type="submit" class="btn-principal" value="Cadastrar">
+            </div>
+
+                
+            <form>
+        </div>
+    </div>
+
+{% endblock %}
