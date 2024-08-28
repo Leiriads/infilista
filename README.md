@@ -20,4 +20,14 @@ Para executar o projeto Infilista, siga estes passos simples:
    python start.py
 
 ### Passo 2: Acessar o Projeto
+
 - **Após executar o script, o projeto estará acessível em seu navegador na seguinte URL:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **No painel de login, use as seguintes credenciais:**
+
+  - **Usuário admin:**
+    - **Usuário:** `admin`
+    - **Senha:** `123`
+
+  - **Usuário cmei:**
+    - **Usuário:** `cmei`
+    - **Senha:** `123`
