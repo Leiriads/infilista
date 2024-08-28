@@ -1,5 +1,9 @@
 # Infilista
 
+![image](https://github.com/user-attachments/assets/f5776d25-6d86-4c06-ba09-0c40000c7f17)
+
+
+
 ## Como Executar o Projeto
 
 Para executar o projeto Infilista, siga estes passos simples:
