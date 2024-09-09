@@ -17,8 +17,18 @@ class ListaEspera(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='nao_confirmado')
 
     def save(self, *args, **kwargs):
-        #print(f"Salvando: {self}")  # Adicione esta linha para depuração
-        if self.pk and self.status == 'confirmado':
-            if not self.dataSaida:
-                self.dataSaida = self.dataEntrada
+        # Se a ordem não foi definida, calculamos o valor sequencial
+        if self.ordem is None:
+            # Obtém o maior valor de 'ordem' na mesma turma
+            ultimo_na_turma = ListaEspera.objects.filter(turma=self.turma).order_by('ordem').last()
+            if ultimo_na_turma:
+                self.ordem = ultimo_na_turma.ordem + 1
+            else:
+                self.ordem = 1  # Se for o primeiro da turma, começa com 1
+        
+        # Se o status for confirmado e não houver dataSaida, atribui a dataEntrada
+        if self.pk and self.status == 'confirmado' and not self.dataSaida:
+            self.dataSaida = self.dataEntrada
+        
+        # Salva o registro
         super().save(*args, **kwargs)

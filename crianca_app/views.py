@@ -50,14 +50,23 @@ def editar_crianca(request, codCrianca):
     return render(request, 'editar_crianca.html', {'form': form,'usuario_autenticado': usuario_autenticado})
     
 @cmei_ou_admin_requerido
-def deletar_crianca(request,codCrianca):
-    # view chamou a model pra verificar se a crianca tem no banco
-    crianca = get_object_or_404(Crianca,codCrianca = codCrianca)
-    # verificou e continou 
-    # a model deletou dentro do banco pela orm
-    crianca.delete()
-    # a model retorna pra  view
-
-    # a minha view gerou um template ou me redirecionou pra
-    messages.success(request, 'Criança Excluida com sucesso!')
+def deletar_crianca(request, codCrianca):
+    try:
+        # Obtém o objeto ou retorna um erro 404 se não encontrado
+        crianca = get_object_or_404(Crianca, codCrianca=codCrianca)
+        
+        # Deleta o objeto
+        crianca.delete()
+        
+        # Adiciona uma mensagem de sucesso
+        messages.success(request, 'Criança excluída com sucesso!')
+    
+    except Exception as e:
+        # Adiciona uma mensagem de erro se algo der errado
+        messages.error(request, 'Ocorreu um erro ao excluir a criança.')
+        
+        # Opcionalmente, você pode redirecionar para uma página específica de erro ou para a lista
+        return redirect('listar_crianca')
+    
+    # Redireciona para a lista de crianças após a exclusão com sucesso
     return redirect('listar_crianca')

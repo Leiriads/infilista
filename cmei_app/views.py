@@ -76,10 +76,16 @@ def editar_cmei(request, codCmei):
     
 @admin_requerido
 def deletar_cmei(request,codCmei):
-    cmei = get_object_or_404(CMEI,codCmei = codCmei)
-    cmei.delete()
-    messages.success(request, 'Cmei excluído com sucesso!')
-    return redirect('listar_cmei')
+    try:
 
+        cmei = get_object_or_404(CMEI,codCmei = codCmei)
+        cmei.delete()
+        messages.success(request, 'Cmei excluído com sucesso!')
+
+    except Exception as e:
+        messages.error(request, 'Ocorreu um erro ao excluir o cmei.')
+        return redirect('listar_cmei')
+
+    return redirect('listar_cmei')
 
     

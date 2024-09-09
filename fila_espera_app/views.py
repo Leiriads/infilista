@@ -166,11 +166,27 @@ def listar_lista_espera(request):
 
 @admin_requerido
 def deletar_lista_espera(request, id):
-    item = get_object_or_404(ListaEspera, pk=id)
-    item.delete()
-    messages.success(request, "Criança Removida da lista com sucesso.")
+    try:
+        item = get_object_or_404(ListaEspera, pk=id)
+        item.delete()
+        messages.success(request, "Criança Removida da lista com sucesso.")
+    except Exception as e:
+        messages.error(request, 'Ocorreu um erro ao excluir a lista.')
+        return redirect('listar_lista_espera')
     return redirect('listar_lista_espera')  # Redireciona para a lista de espera após exclusão
     
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

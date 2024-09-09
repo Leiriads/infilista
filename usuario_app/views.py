@@ -87,9 +87,17 @@ def excluir_usuario(request, pk):
         return redirect('listar_usuarios')
     
     if request.method == 'POST':
-        usuario.delete()
-        messages.success(request, 'Usuário Excluido com sucesso!')
+        try:
+            usuario.delete()
+            messages.success(request, 'Usuário Excluido com sucesso!')
+        except Exception as e:
+            messages.error(request, 'Ocorreu um erro ao excluir o Usuário.')
+            return redirect('listar_usuarios')
+
         return redirect('listar_usuarios')  # Redireciona para a lista de usuários
+
+
+
 
 
 def sair(request):

@@ -58,10 +58,12 @@ def editar_turma(request, codTurma):
     
 @cmei_ou_admin_requerido
 def deletar_turma(request,codTurma):
-    turma = get_object_or_404(Turma,codTurma = codTurma)
-    turma.delete()
-    messages.success(request, 'Turma excluída com sucesso!')
+    try:
+        turma = get_object_or_404(Turma,codTurma = codTurma)
+        turma.delete()
+        messages.success(request, 'Turma excluída com sucesso!')
+    except Exception as e:
+        messages.error(request, 'Ocorreu um erro ao excluir a turma.')
+        return redirect('listar_turma')
+    
     return redirect('listar_turma')
-
-
-
