@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Lista de Espera{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+    <h1 class="uk-heading-line">Inserir Criança na Lista de Espera</h1>
+    <div class="uk-margin">
+        <a href="{% url 'listar_lista_espera' %}" class="uk-button uk-button-default uk-margin-right">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+    <!-- Formulário para selecionar o CMEI -->
+    <form method="get" action="{% url 'criar_lista_espera' %}" class="uk-form-stacked">
+        <fieldset class="uk-fieldset">
+            <div class="uk-margin">
+                <label class="uk-form-label" for="codCmei">Selecione o CMEI:</label>
+                <div class="uk-form-controls">
+                    <select id="codCmei" name="codCmei" class="uk-select" required>
+                        <option value="">-- Selecione um CMEI --</option>
+                        {% for cmei in cmei_list %}
+                            <option value="{{ cmei.codCmei }}" {% if cmei.codCmei|stringformat:"s" == codCmei %}selected{% endif %}>
+                                {{ cmei.nomeCmei }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="uk-margin">
+                <button type="submit" class="uk-button uk-button-primary">Filtrar</button>
+            </div>
+        </fieldset>
+    </form>
+
+    <!-- Formulário para criar a Lista de Espera -->
+    {% if codCmei %}
+        <h2 class="uk-heading-line">Cadastro de Lista de Espera</h2>
+        <form method="post" action="{% url 'criar_lista_espera' %}" class="uk-form-stacked">
+            {% csrf_token %}
+
+            <!-- Campo oculto para codCmei -->
+            <input type="hidden" name="codCmei" value="{{ codCmei }}">
+
+            <!-- Exibindo erros de validação do formulário -->
+            {% if form.errors %}
+                <div class="uk-alert-danger" uk-alert>
+                    <a class="uk-alert-close" uk-close></a>
+                    <ul class="uk-list uk-list-bullet">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="crianca">Criança</label>
+                        <div class="uk-form-controls">
+                            <input type="text" id="crianca" name="crianca" class="uk-input" autocomplete="off" required />
+                            <input type="hidden" id="crianca_id" name="crianca_id" required />
+                            <div id="crianca-suggestions" class="uk-list uk-list-divider uk-margin-remove"></div>
+                            {% if form.crianca.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.crianca.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_turma">Turma</label>
+                        <div class="uk-form-controls">
+                            <select name="turma" id="id_turma" class="uk-select" required>
+                                <option value="" selected>---------</option>
+                                {% for turma in form.fields.turma.queryset %}
+                                    <option value="{{ turma.codTurma }}" {% if turma.codTurma|stringformat:"s" == form.turma.value %}selected{% endif %}>
+                                        {{ turma.nomeTurma }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.turma.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.turma.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_criterio">Critério</label>
+                        <div class="uk-form-controls">
+                            <input type="text" name="criterio" id="id_criterio" class="uk-input" required />
+                            {% if form.criterio.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.criterio.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-width-1-1">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_status">Status</label>
+                        <div class="uk-form-controls">
+                            <select name="status" id="id_status" class="uk-select" required>
+                                <option value="confirmado" {% if form.status.value == 'confirmado' %}selected{% endif %}>Confirmado</option>
+                                <option value="nao_confirmado" {% if form.status.value == 'nao_confirmado' %}selected{% endif %}>Não Confirmado</option>
+                            </select>
+                            {% if form.status.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.status.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <button type="submit" class="uk-button uk-button-primary">Cadastrar</button>
+            </div>
+        </form>
+    {% endif %}
+</div>
+
+<!-- Script para o campo de busca de criança -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const criancaInput = document.getElementById('crianca');
+    const criancaIdInput = document.getElementById('crianca_id');
+    const suggestionsContainer = document.getElementById('crianca-suggestions');
+
+    criancaInput.addEventListener('input', function () {
+        const query = criancaInput.value;
+
+        if (query.length < 2) {
+            suggestionsContainer.innerHTML = '';
+            return;
+        }
+
+        fetch(`/fila_espera/procurar_crianca/?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                suggestionsContainer.innerHTML = '';
+
+                if (data.length > 0 && data[0].id !== null) {
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.classList.add('uk-card', 'uk-card-default', 'uk-card-body');
+                        div.style.cursor = 'pointer';
+                        div.innerHTML = `
+                            <strong><i class="fas fa-child"></i> ${item.name}</strong><br>
+                            Responsável: ${item.responsavel || 'N/A'}<br>
+                            CPF do Responsável: ${item.cpf_responsavel || 'N/A'}
+                        `;
+                        div.addEventListener('click', () => {
+                            criancaInput.value = item.name;
+                            criancaIdInput.value = item.id;  // Aqui associamos o ID da criança ao campo oculto
+                            suggestionsContainer.innerHTML = '';
+                        });
+                        suggestionsContainer.appendChild(div);
+                    });
+                } else {
+                    const div = document.createElement('div');
+                    div.classList.add('uk-card', 'uk-card-default', 'uk-card-body','uk-text-danger');
+                    div.textContent = 'Nenhuma criança encontrada';
+                    suggestionsContainer.appendChild(div);
+                }
+            });
+    });
+});
+</script>
+{% endblock %}

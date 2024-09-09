@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Espera Geral{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: Arial, sans-serif;
+    }
+    .uk-container {
+        margin-top: 20px;
+    }
+    .uk-heading-line {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .uk-table-container {
+        margin: 0 auto;
+        width: 80%;
+    }
+    .uk-table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .uk-table th, .uk-table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .search-container {
+        margin-bottom: 20px;
+        text-align: center; /* Centraliza o conteúdo */
+    }
+    .uk-search {
+        display: inline-block; /* Permite que o elemento de pesquisa tenha largura automática e fique centralizado */
+        max-width: 600px; /* Define a largura máxima do campo de pesquisa */
+    }
+    .uk-search input {
+        border-radius: 4px; /* Arredonda os cantos do campo de pesquisa */
+    }
+    .no-results {
+        text-align: center;
+        color: #888;
+        padding: 10px 0;
+    }
+
+
+    .button-group {
+        display: inline-flex; /* Para alinhar os botões lado a lado */
+        gap: 8px; /* Espaço entre os botões */
+    }
+
+    .uk-button-small {
+        white-space: nowrap; /* Garante que o texto do botão não quebre */
+    }
+
+    .btn-status {
+        min-width: 100px; /* Define uma largura mínima para o botão de status */
+    }
+</style>
+
+<div class="uk-container">
+    <!-- Link para inserir na lista de espera -->
+    <div class="uk-text-center">
+        <a href="{% url 'criar_lista_espera' %}" class="uk-button uk-button-primary uk-margin-bottom">
+            Inserir Criança na Lista de Espera
+        </a>
+    </div>
+    
+
+    <h1 class="uk-heading-line"><span>Lista de Espera Geral</span></h1>
+
+    <!-- Filtro de pesquisa -->
+    <div class="search-container">
+        <div class="uk-search uk-search-default">
+            <span class="uk-search-icon" uk-search-icon></span>
+            <input class="uk-search-input" id="search-input" type="search" placeholder="Pesquisar na lista...">
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="uk-table-container">
+        <table class="uk-table uk-table-hover uk-table-striped uk-table-small uk-table-responsive" id="espera-table">
+            <thead>
+                <tr>
+                    <th>Criança</th>
+                    <th>CMEI</th>
+                    <th>Turma</th>
+                    <th>Data de Entrada</th>
+                    <th>Critério</th>
+                    <th>Status</th>
+                    {% if usuario_autenticado %}
+                        {% if usuario_autenticado.is_superuser %}
+                    <th>Ações</th>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+               
+                {% for item in lista_espera %}
+<tr>
+    <td>{{ item.crianca.nomeCrianca }}</td>
+    <td>{{ item.turma.cmei.nomeCmei }}</td>
+    <td>{{ item.turma.nomeTurma }}</td>
+    <td>{{ item.dataEntrada }}</td>
+    <td>{{ item.criterio }}</td>
+    <td>{{ item.get_status_display }}</td>
+    {% if usuario_autenticado %}
+        {% if usuario_autenticado.is_superuser %}
+        <td style="text-align: center;">
+            <div class="button-group">
+                <!-- Botão Excluir -->
+                <form action="{% url 'deletar_lista_espera' item.id %}" method="post" class="delete-form" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="button" class="uk-button uk-button-danger uk-button-small btn-delete" 
+                            data-nome="{{ item.crianca.nomeCrianca }}">
+                        <i class="fas fa-trash"></i> Excluir
+                    </button>
+                </form>
+                
+                <!-- Botão Alterar Status -->
+                <form action="{% url 'alterar_status_lista_espera' item.id %}" method="post" class="status-form" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="button" class="uk-button uk-button-primary uk-button-small btn-status" 
+                            data-status="{{ item.get_status_display }}" data-nome="{{ item.crianca.nomeCrianca }}">
+                        <i class="fas fa-exchange-alt"></i> Status
+                    </button>
+                </form>
+            </div>
+        </td>
+        {% endif %}
+    
+    {% endif %}
+</tr>
+{% empty %}
+<tr>
+    <td colspan="8" class="no-results">Nenhuma criança na fila de espera.</td>
+</tr>
+{% endfor %}
+            </tbody>
+        </table>
+        <div class="no-results" style="display: none; color: red;">
+            Nenhum resultado encontrado.
+        </div>
+    </div>
+</div>
+
+<!-- jQuery Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#search-input').on('input', function() {
+            var searchValue = $(this).val().toLowerCase();
+            var $rows = $('#espera-table tbody tr');
+            
+            // Filtra as linhas da tabela com base no valor da busca
+            var $filteredRows = $rows.filter(function() {
+                var text = $(this).text().toLowerCase();
+                return text.indexOf(searchValue) > -1;
+            });
+
+            // Oculta todas as linhas
+            $rows.hide();
+            
+            // Mostra as linhas filtradas, se houver
+            if ($filteredRows.length) {
+                $filteredRows.show();
+                $('.no-results').hide();  // Oculta a mensagem de não encontrado
+            } else {
+                $('.no-results').show();  // Mostra a mensagem de não encontrado
+            }
+
+            // Mostra todas as linhas e oculta a mensagem de não encontrado se o campo de busca estiver vazio
+            if (searchValue === '') {
+                $rows.show();
+                $('.no-results').hide();
+            }
+        });
+    });
+
+     // Intercepta o clique no botão de excluir
+     document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const form = this.closest('form'); // Pega o formulário correspondente
+            const nomeLista_espera = this.getAttribute('data-nome'); // Obtém o nome da criança
+            
+            Swal.fire({
+                title: 'Tem certeza?',
+                html: `Você deseja excluir <span style="color: red;">${nomeLista_espera}</span> da fila de espera? Esta ação não pode ser revertida!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submete o formulário se confirmado
+                }
+            });
+        });
+    });
+
+
+    // Intercepta o clique no botão de alterar status
+    document.querySelectorAll('.btn-status').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const form = this.closest('form');  // Pega o formulário correspondente
+            const nomeLista_espera = this.getAttribute('data-nome'); // Nome da criança
+            const statusAtual = this.getAttribute('data-status');  // Status atual da criança
+
+            // Define o novo status com base no status atual
+            let novoStatus = (statusAtual === 'Confirmado') ? 'Não Confirmado' : 'Confirmado';
+
+            Swal.fire({
+                title: 'Tem certeza?',
+                html: `Você deseja alterar o <span style="color: green;">status</span> de <span style="color: red;">${nomeLista_espera}</span> de <strong>${statusAtual}</strong> para <strong>${novoStatus}</strong>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Sim, alterar para ${novoStatus}!`,
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();  // Submete o formulário se confirmado
+                }
+            });
+        });
+    });
+
+</script>
+
+
+{% endblock %}

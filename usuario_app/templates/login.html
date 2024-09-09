@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Login</title>
+    <!-- UIKit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/css/uikit.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#loginform').on('submit', function(event) {
+                event.preventDefault(); // Evita o envio tradicional do formulário
+                
+                $.ajax({
+                    url: "{% url 'login_usuario' %}",
+                    type: 'POST',
+                    data: {
+                        'username': $('#username').val(),
+                        'password': $('#password').val(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Tudo certo!',
+                                'Você será redirecionado(a) em 3 segundos!',
+                                'success'
+                            );
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 3000);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.message,
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        body {
+            background: linear-gradient(to right, #303030, #1d1c1d); /* Gradiente com cinza escuro e quase preto */
+            font-family: Arial, sans-serif; /* Fonte padrão */
+            height: 100vh; /* Altura total da tela */
+            margin: 0; /* Remove margens padrão */
+            overflow: hidden; /* Impede rolagem da tela */
+        }
+        .login-container {
+            position: absolute; /* Torna o formulário fixo */
+            top: 50%; /* Centraliza verticalmente */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translate(-50%, -50%); /* Ajusta a centralização */
+            max-width: 400px; /* Largura máxima do formulário */
+            width: 100%; /* Largura responsiva */
+            padding: 30px; /* Espaçamento interno */
+            background-color: #1d1c1d; /* Fundo escuro para o formulário */
+            border-radius: 8px; /* Bordas arredondadas */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra suave */
+            color: #ffffff; /* Cor do texto */
+        }
+        h1 {
+            text-align: center; /* Centraliza o título */
+            margin-bottom: 20px; /* Espaçamento abaixo do título */
+            color: #ffffff; /* Cor do texto do título */
+        }
+        .uk-form-label {
+            color: #ffffff; /* Cor branca para os labels */
+        }
+        .uk-input {
+            border-radius: 5px; /* Bordas arredondadas para os campos de entrada */
+            background-color: #303030; /* Cor de fundo cinza escuro */
+            color: #ffffff; /* Cor do texto */
+            border: 1px solid #444; /* Borda sutil para os campos */
+            box-shadow: none; /* Remove a sombra interna */
+        }
+        .uk-input::placeholder {
+            color: #888; /* Cor do placeholder */
+        }
+        .uk-button-primary {
+            background-color: #ffffff; /* Cor do botão */
+            border: none; /* Remove bordas padrão */
+            border-radius: 5px; /* Bordas arredondadas para o botão */
+            color: #303030; /* Cor do texto do botão */
+            padding: 10px 0; /* Ajusta o padding para um visual mais equilibrado */
+            font-size: 16px; /* Tamanho da fonte */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para hover */
+        }
+        .uk-button-primary:hover {
+            background-color: #303030; /* Cor do botão no hover */
+            color: #ffffff; /* Cor do texto no hover */
+        }
+        .create-account {
+            text-align: center; /* Centraliza o link "Criar Usuário" */
+            margin-top: 15px; /* Espaçamento acima do link */
+        }
+        .create-account a {
+            color: #ffffff; /* Cor do link "Criar Usuário" */
+            text-decoration: none; /* Remove o sublinhado padrão */
+        }
+        .create-account a:hover {
+            text-decoration: underline; /* Adiciona sublinhado no hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container uk-card uk-card-default uk-card-body">
+        <h1>LOGIN</h1>
+        <form id="loginform" action="{% url 'login_usuario' %}" method="POST"> {% csrf_token %}
+            <div class="uk-margin">
+                <label for="username" class="uk-form-label">Usuário</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="text" id="username" name="username" placeholder="Digite seu usuário" required>
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label for="password" class="uk-form-label">Senha</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                </div>
+            </div>
+            <button type="submit" class="uk-button uk-button-primary uk-width-1-1">Entrar</button>
+        </form>
+        
+    </div>
+
+    <!-- UIKit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.14.3/dist/js/uikit-icons.min.js"></script>
+
+    <!-- Incluindo o jQuery e o JavaScript do SweetAlert2 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

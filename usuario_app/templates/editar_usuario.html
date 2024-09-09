@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+
+<div class="uk-container">
+    
+
+    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-align-center">
+        <h1 class="uk-heading-line uk-text-center"><span>Alterar Cadastro Usuário</span></h1>
+        <form method="post" class="uk-form-stacked">
+            {% csrf_token %}
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_username">Nome de Usuário</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="username" id="id_username" class="uk-input" value="{{ form.username.value }}" required/>
+                    {% if form.username.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.username.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_email">Email</label>
+                <div class="uk-form-controls">
+                    <input type="email" name="email" id="id_email" class="uk-input" value="{{ form.email.value }}" required />
+                    {% if form.email.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.email.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_password">Senha</label>
+                <div class="uk-form-controls">
+                    <input type="password" name="password" id="id_password" class="uk-input" required/>
+                    {% if form.password.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.password.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_tipo_usuario">Tipo de Usuário</label>
+                <div class="uk-form-controls">
+                    <select name="tipo_usuario" id="id_tipo_usuario" class="uk-select">
+                        <option value="0" {% if form.instance.is_superuser == False %}selected{% endif %}>Cmei</option>
+                        <option value="1" {% if form.instance.is_superuser %}selected{% endif %}>Administrador</option>
+                    </select>
+                    {% if form.tipo_usuario.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.tipo_usuario.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="uk-margin uk-text-center">
+                <a href="{% url 'listar_usuarios' %}" class="uk-button uk-button-default uk-margin-right">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="uk-button uk-button-primary">Confirmar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit-icons.min.js"></script>
+    {% endblock  %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Turma{% endblock %}
+
+{% block content %}
+<style>
+    .uk-input-readonly {
+        background-color: #f0f0f0; /* Cor de fundo cinza claro */
+        color: #6c757d; /* Cor do texto para contraste */
+        cursor: not-allowed; /* Indica que o campo não é editável */
+        border: 1px solid #ced4da; /* Borda cinza clara para combinar com o fundo */
+    }
+</style>
+
+<div class="uk-container">
+    
+    <h2 class="uk-heading-line uk-text-center"><span>Alterar Cadastro Turma</span></h2>
+    
+    <form method="post" class="uk-form-stacked">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
+            <div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="{{ form.codTurma.id_for_label }}">Código da Turma</label>
+                    <div class="uk-form-controls">
+                        <input type="text" name="codTurma" id="{{ form.codTurma.id_for_label }}" class="uk-input uk-input-readonly" value="{{ form.codTurma.value }}" readonly/>
+                        {% if form.codTurma.errors %}
+                            <div class="uk-text-danger">
+                                {% for error in form.codTurma.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+            <div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="{{ form.nomeTurma.id_for_label }}">Nome da Turma</label>
+                    <div class="uk-form-controls">
+                        <input type="text" name="nomeTurma" id="{{ form.nomeTurma.id_for_label }}" class="uk-input" value="{{ form.nomeTurma.value }}" />
+                        {% if form.nomeTurma.errors %}
+                            <div class="uk-text-danger">
+                                {% for error in form.nomeTurma.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="{{ form.cmei.id_for_label }}">CMEI</label>
+                    <div class="uk-form-controls">
+                        <select name="cmei" id="{{ form.cmei.id_for_label }}" class="uk-select">
+                            {% for option in form.cmei.field.queryset %}
+                                <option value="{{ option.pk }}" {% if option.pk == form.cmei.value %}selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.cmei.errors %}
+                            <div class="uk-text-danger">
+                                {% for error in form.cmei.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-width-1-1">
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="{{ form.observacaoTurma.id_for_label }}">Observação</label>
+                    <div class="uk-form-controls">
+                        <textarea name="observacaoTurma" id="{{ form.observacaoTurma.id_for_label }}" class="uk-textarea">{{ form.observacaoTurma.value }}</textarea>
+                        {% if form.observacaoTurma.errors %}
+                            <div class="uk-text-danger">
+                                {% for error in form.observacaoTurma.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-margin uk-text-center">
+            <a href="{% url 'listar_turma' %}" class="uk-button uk-button-default uk-margin-right">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <button type="submit" class="uk-button uk-button-primary">Confirmar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

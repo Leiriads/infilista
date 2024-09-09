@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Edição de Criança{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+    <div class="uk-card uk-card-default uk-card-body uk-width-1-1@m uk-align-center">
+        <h1 class="uk-heading-line uk-text-center"><span>Alterar Cadastro da Criança</span></h1>
+        <form method="post" class="uk-form-stacked">
+            {% csrf_token %}
+
+            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_nomeCrianca">Nome da Criança</label>
+                        <div class="uk-form-controls">
+                            <input type="text" name="nomeCrianca" id="id_nomeCrianca" class="uk-input" value="{{ form.nomeCrianca.value }}" required />
+                            {% if form.nomeCrianca.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.nomeCrianca.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_dataNascCrianca">Data de Nascimento</label>
+                        <div class="uk-form-controls">
+                            <input type="date" name="dataNascCrianca" id="id_dataNascCrianca" class="uk-input" value="{{ form.dataNascCrianca.value|date:'Y-m-d' }}" required />
+                            {% if form.dataNascCrianca.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.dataNascCrianca.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_nomeResponsavel">Nome do Responsável</label>
+                        <div class="uk-form-controls">
+                            <input type="text" name="nomeResponsavel" id="id_nomeResponsavel" class="uk-input" value="{{ form.nomeResponsavel.value }}" required />
+                            {% if form.nomeResponsavel.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.nomeResponsavel.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_telefoneResponsavel">Telefone do Responsável</label>
+                        <div class="uk-form-controls">
+                            <input type="text" name="telefoneResponsavel" id="id_telefoneResponsavel" class="uk-input" value="{{ form.telefoneResponsavel.value }}" required />
+                            {% if form.telefoneResponsavel.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.telefoneResponsavel.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_emailResponsavel">Email do Responsável</label>
+                        <div class="uk-form-controls">
+                            <input type="email" name="emailResponsavel" id="id_emailResponsavel" class="uk-input" value="{{ form.emailResponsavel.value }}" required />
+                            {% if form.emailResponsavel.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.emailResponsavel.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_cpfResponsavel">CPF do Responsável</label>
+                        <div class="uk-form-controls">
+                            <input type="text" name="cpfResponsavel" id="id_cpfResponsavel" class="uk-input" value="{{ form.cpfResponsavel.value }}" required />
+                            {% if form.cpfResponsavel.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.cpfResponsavel.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-width-1-1">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="id_observacao">Observação</label>
+                        <div class="uk-form-controls">
+                            <textarea name="observacao" id="id_observacao" class="uk-textarea" rows="3">{{ form.observacao.value }}</textarea>
+                            {% if form.observacao.errors %}
+                                <div class="uk-text-danger">
+                                    {% for error in form.observacao.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-margin uk-text-center">
+                <a href="{% url 'listar_crianca' %}" class="uk-button uk-button-default uk-margin-right">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="uk-button uk-button-primary">Confirmar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit-icons.min.js"></script>
+{% endblock %}

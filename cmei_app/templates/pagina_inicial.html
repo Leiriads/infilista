@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Filtrar Lista de Espera{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: Arial, sans-serif;
+    }
+    .uk-container {
+        margin-top: 20px;
+        text-align: center; /* Centraliza o texto dentro do container */
+    }
+    .uk-heading-line {
+        margin-bottom: 30px;
+        display: inline-block;
+        border-bottom: 2px solid #c8ff00; /* Linha decorativa embaixo do título */
+        padding-bottom: 10px;
+        color: #000000; /* Cor do texto do título */
+        font-size: 24px; /* Ajuste o tamanho da fonte conforme necessário */
+    }
+    .uk-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra leve para um efeito de profundidade */
+    }
+    .uk-card-body {
+        padding: 20px;
+    }
+    .uk-card-title {
+        font-size: 18px; /* Ajuste o tamanho da fonte do título conforme necessário */
+        margin-bottom: 15px;
+    }
+    .uk-button-primary {
+        background-color: #007bff; /* Cor do botão */
+        border-color: #007bff;
+        border-radius: 4px; /* Bordas arredondadas para o botão */
+        color: #fff;
+    }
+    .uk-button-primary:hover {
+        background-color: #0056b3; /* Cor do botão ao passar o mouse */
+        border-color: #004085;
+    }
+    .uk-grid-small > * {
+        padding: 10px; /* Espaçamento entre os cartões */
+    }
+    .search-container {
+        margin-bottom: 20px;
+        text-align: center; /* Centraliza o conteúdo */
+    }
+    .uk-search {
+        display: inline-block; /* Permite que o elemento de pesquisa tenha largura automática e fique centralizado */
+        max-width: 600px; /* Define a largura máxima do campo de pesquisa */
+    }
+    .uk-search input {
+        border-radius: 4px; /* Arredonda os cantos do campo de pesquisa */
+    }
+</style>
+
+<div class="uk-container">
+    
+    
+    <h1 class="uk-heading-line">Escolha um CMEI para visualizar</h1>
+    
+    <!-- Campo de pesquisa -->
+    <div class="search-container">
+        <div class="uk-search uk-search-default">
+            <span class="uk-search-icon" uk-search-icon></span>
+            <input class="uk-search-input" id="search-input" type="search" placeholder="Pesquisar CMEI...">
+        </div>
+    </div>
+    
+    <div class="uk-grid-small uk-child-width-1-3@m uk-text-center" uk-grid id="cmei-grid">
+        {% for cmei in cmeis %}
+            <div class="cmei-card" data-name="{{ cmei.nomeCmei|lower }}">
+                <div class="uk-card uk-card-default uk-card-hover">
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title">{{ cmei.nomeCmei }}</h3>
+                        <a href="{% url 'lista_espera_por_cmei' cmei.codCmei %}" class="uk-button uk-button-primary">Ver Lista de Espera</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p id="no-results">Nenhum CMEI encontrado.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Inicializa a visibilidade dos cartões
+        $('#no-results').hide();
+
+        // Função de filtro
+        $('#search-input').on('input', function() {
+            var query = $(this).val().toLowerCase();
+            
+            var hasResults = false;
+            
+            $('.cmei-card').each(function() {
+                var cmeiName = $(this).data('name');
+                
+                if (cmeiName.includes(query)) {
+                    $(this).show();
+                    hasResults = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+            
+            // Exibe mensagem se nenhum resultado for encontrado
+            if (!hasResults) {
+                $('#no-results').show();
+            } else {
+                $('#no-results').hide();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

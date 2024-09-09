@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Usuário{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-align-center">
+        <h1 class="uk-heading-line uk-text-center"><span>Cadastro de Usuário</span></h1>
+        <form method="post" class="uk-form-stacked">
+            {% csrf_token %}
+
+            <!-- Campo Nome de Usuário -->
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_username">Nome de Usuário</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="username" id="id_username" class="uk-input" required 
+                           value="{{ form.username.value|default:'' }}"/>
+                    {% if form.username.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.username.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Campo Email -->
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_email">Email</label>
+                <div class="uk-form-controls">
+                    <input type="email" name="email" id="id_email" class="uk-input" required 
+                           value="{{ form.email.value|default:'' }}" />
+                    {% if form.email.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.email.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Campo Senha -->
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_password">Senha</label>
+                <div class="uk-form-controls">
+                    <input type="password" name="password" id="id_password" class="uk-input" />
+                    {% if form.password.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.password.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Campo Tipo de Usuário -->
+            <div class="uk-margin">
+                <label class="uk-form-label" for="id_tipo_usuario">Tipo de Usuário</label>
+                <div class="uk-form-controls">
+                    <select name="tipo_usuario" id="id_tipo_usuario" class="uk-select">
+                        <option value="0" {% if form.tipo_usuario.value == '0' %}selected{% endif %}>Cmei</option>
+                        <option value="1" {% if form.tipo_usuario.value == '1' %}selected{% endif %}>Administrador</option>
+                    </select>
+                    {% if form.tipo_usuario.errors %}
+                        <div class="uk-text-danger">
+                            {% for error in form.tipo_usuario.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="uk-margin uk-text-center">
+                <a href="{% url 'listar_usuarios' %}" class="uk-button uk-button-default uk-margin-right">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="uk-button uk-button-primary">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.11/dist/js/uikit-icons.min.js"></script>
+{% endblock %}

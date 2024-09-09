@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}CMEIs{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: Arial, sans-serif;
+    }
+    .uk-container {
+        margin-top: 20px;
+    }
+    .uk-heading-line {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .uk-table-container {
+        margin: 0 auto;
+        width: 80%;
+    }
+    .uk-table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .uk-table th, .uk-table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="uk-container">
+    <h2 class="uk-heading-line"><span>Lista de Cmei's </span></h2>
+    
+    <div class="uk-text-center">
+        <a href="{% url 'criar_cmei' %}" class="uk-button uk-button-primary uk-margin-bottom">
+            Adicionar CMEI
+        </a>
+    </div>
+
+    <div class="uk-table-container">
+        <table class="uk-table uk-table-hover uk-table-striped uk-table-small uk-table-responsive">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cmei in cmeis %}
+                <tr>
+                    <td>{{ cmei.codCmei }}</td>
+                    <td>{{ cmei.nomeCmei }}</td>
+                    <td>
+                        <a href="{% url 'editar_cmei' cmei.codCmei %}" class="uk-button uk-button-default uk-button-small">
+                            Editar
+                        </a>
+                        <form action="{% url 'deletar_cmei' cmei.codCmei %}" method="post" class="delete-form" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="button" class="uk-button uk-button-danger uk-button-small btn-delete" data-nome="{{  cmei.nomeCmei }}">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Intercepta o clique no botão de excluir
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const form = this.closest('form'); // Pega o formulário correspondente
+            const nomeCmei = this.getAttribute('data-nome'); // Obtém o nome da criança
+            
+            Swal.fire({
+                title: 'Tem certeza?',
+                html: `Você deseja excluir o Cmei <span style="color: red;">${nomeCmei}</span>? Esta ação não pode ser revertida!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submete o formulário se confirmado
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

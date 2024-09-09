@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Cmei{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-align-center">
+        <div class="uk-text-center">
+            <h1 class="uk-heading-line">Cadastro de CMEI</h1>
+            <p class="uk-text-muted">( Instituição )</p>
+        </div>
+        <form method="post" class="uk-form-stacked">
+            {% csrf_token %}
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="nomeCmei">Nome do Cmei</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="nomeCmei" id="nomeCmei" class="uk-input" required/>
+                </div>
+            </div>
+            <div class="uk-margin uk-text-center">
+                <a href="{% url 'listar_cmei' %}" class="uk-button uk-button-default uk-margin-right">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="uk-button uk-button-primary">Confirmar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

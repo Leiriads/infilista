@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Turmas{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos gerais */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+    }
+
+    .container {
+        margin-top: 2rem;
+    }
+
+    /* Card */
+    .uk-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 1.5rem;
+    }
+
+    .uk-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .uk-card-header {
+        background-color: rgba(30, 30, 30, 0.925);
+        color: white;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .uk-card-body {
+        padding: 1rem;
+    }
+
+    .uk-list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .uk-list-group-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .uk-list-group-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Layout dos cards */
+    .uk-card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .uk-card-col {
+        flex: 1 1 calc(33.333% - 1rem);
+        max-width: calc(33.333% - 1rem);
+    }
+
+    /* Estilizando botões */
+    .uk-button-small {
+        width: 100px; /* Define um tamanho fixo para os botões */
+    }
+</style>
+
+<h2 class="uk-heading-line"><span>Lista de Turmas</span></h2>
+
+<br>
+{% if is_admin %}
+<div class="uk-text-center">
+    <a href="{% url 'criar_turma' %}" class="uk-button uk-button-primary uk-margin-bottom">
+        Adicionar Turma
+    </a>
+</div>
+{% endif %}
+
+<div class="container">
+    <div class="uk-card-container">
+        {% for cmei_id, turmas in turmas_por_cmei.items %}
+            <div class="uk-card-col">
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header uk-text-center">
+                        <i class="fas fa-school uk-margin-small-right"></i> {{ turmas.0.cmei.nomeCmei }}
+                    </div>
+                    
+                    <div class="uk-card-body">
+                        <ul class="uk-list uk-list-divider">
+                            {% for turma in turmas %}
+                                <li class="uk-list-group-item uk-flex uk-flex-between uk-flex-middle">
+                                    <div>
+                                        Código: <strong>{{ turma.codTurma }}</strong>
+                                    </div>
+                                    <div>
+                                        Nome: <strong>{{ turma.nomeTurma }}</strong>
+                                    </div>
+                                    <div>
+                                        <form action="{% url 'editar_turma' turma.codTurma %}" method="get" class="uk-inline">
+                                            <button type="submit" class="uk-button uk-button-primary uk-button-small">Editar</button>
+                                        </form>
+                                        <form action="{% url 'deletar_turma' turma.codTurma %}" method="post" class="delete-form" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="button" class="uk-button uk-button-danger uk-button-small btn-delete" data-nome="{{ turma.nomeTurma }}">Excluir</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Intercepta o clique no botão de excluir
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const form = this.closest('form'); // Pega o formulário correspondente
+            const nomeTurma = this.getAttribute('data-nome'); // Obtém o nome da turma
+            
+            Swal.fire({
+                title: 'Tem certeza?',
+                html: `Você deseja excluir a turma <span style="color: red;">${nomeTurma}</span>? Esta ação não pode ser revertida!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submete o formulário se confirmado
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

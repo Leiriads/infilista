@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+    <h1 class="uk-heading-line">Confirmar Exclusão</h1>
+
+    <p>Você tem certeza de que deseja excluir 
+        <strong style="color: red;">{{ object.crianca.nomeCrianca }}</strong> 
+        da lista de espera?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="uk-button uk-button-danger">Confirmar Exclusão</button>
+        <a href="{% url 'listar_lista_espera' %}" class="uk-button uk-button-default">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
